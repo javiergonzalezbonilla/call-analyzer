@@ -19,4 +19,6 @@ AWS_STORAGE_BUCKET_NAME = 'static'
 
 AWS_ACCESS_KEY_ID = 'abcd'
 AWS_SECRET_ACCESS_KEY = 'abcd2345'
-AWS_S3_ENDPOINT_URL = 'http://localhost:9000'
+AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default="http://nginx:9000")
+
+AWS_UPLOADED_FILES_BUCKET_NAME = 'uploadedfiles'

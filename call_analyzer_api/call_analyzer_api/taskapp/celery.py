@@ -1,6 +1,8 @@
 """Celery app config."""
 
 import os
+
+import boto3
 from celery import Celery
 from django.apps import apps, AppConfig
 from django.conf import settings
@@ -41,11 +43,16 @@ def process_audio_file_task(self, call_id):
     call = Call.objects.get(call_id=call_id)
     uploaded_file = call.uploaded_file
 
-    audio = uploaded_file.audio.open("rb")
+    s3 = boto3.client(
+        "s3",
+        endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
 
-    
+    with uploaded_file.audio.open("rb") as audio:
+        s3.upload_fileobj(
+            audio, settings.AWS_UPLOADED_FILES_BUCKET_NAME, uploaded_file.path
+        )
 
-    print("hello")
-    print(audio)
 
-    # SttServiceFactory().get_service().transcript(uploaded_file)
