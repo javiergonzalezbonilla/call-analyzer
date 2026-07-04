@@ -47,3 +47,6 @@ docker-compose-web-lint:
 
 docker-compose-django-format-code:
 	docker exec -it call-analyzer-call_analyzer_django-1 black .
+
+docker-django-sh:
+	docker exec -it call-analyzer-call_analyzer_django-1 sh

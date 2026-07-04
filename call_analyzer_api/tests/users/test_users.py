@@ -2,6 +2,15 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from users.models import User
+from rest_framework.test import APIClient
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()
 
 
 def login_url():
