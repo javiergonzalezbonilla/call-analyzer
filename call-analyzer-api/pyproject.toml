@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "call-analyzer"
+version = "0.1.0"
+description = "Call Analyzer API"
+requires-python = ">=3.13"
+
+
+
+dependencies = [
+    "djangorestframework",
+    "markdown",
+    "django-filter"
+]
+
+[project.optional-dependencies]
+local = [
+    "ipython",
+    "ipdb",
+    "django-extensions",
+    "mypy",
+    "pytest",
+    "pytest-sugar",
+    "pytest-django",
+    "factory-boy",
+    "flake8",
+    "black",
+
+    "pytz",
+    "python-slugify",
+    "Pillow",
+    "psycopg2-binary",
+    "django",
+    "django-environ",
+    "django-cors-headers",
+    "argon2-cffi",
+    "whitenoise",
+    "redis",
+    "django-redis",
+    "celery",
+    "flower",
+    "tornado",
+    "fast-test-database",
+]
+production = [
+    "gunicorn",
+    "django-storages[boto3]",
+    "django-anymail[mailgun]",
+]
+
+[tool.setuptools.packages.find]
+include = ["*"]
+exclude = []
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "DEBUG"
+minversion = "8.0"
+addopts = ["-ra", "-q", "--strict-markers", "--strict-config", "-v"]
+testpaths = []
+DJANGO_SETTINGS_MODULE = "callanalyzer.settings.local"
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+pythonpath = ["."]

@@ -1,0 +1,58 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "python.defaultInterpreterPath": "/Users/javier/anaconda3/envs/call-analyzer/bin/python",
+        "scm.defaultViewMode": "tree",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "[python]": {
+            "editor.defaultFormatter": "ms-python.black-formatter",
+            "editor.formatOnType": true
+        },
+        "python.analysis.typeCheckingMode": "basic",
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "background.settingScope": "Workspace",
+        "background.autoInstall": true,
+        "background.backgroundOpacity": [
+            0.1,
+            0.25,
+            0.1,
+            0.1
+        ],
+        "background.backgroundSize": [
+            "Cover",
+            "Cover",
+            "Cover",
+            "Cover"
+        ],
+        "background.backgroundAlignment": [
+            "Center Center",
+            "Center Center",
+            "Center Center",
+            "Center Center"
+        ],
+        "background.backgroundRepeat": [
+            "No Repeat",
+            "No Repeat",
+            "No Repeat",
+            "No Repeat"
+        ],
+        "workbench.colorCustomizations": {
+            "titleBar.activeBackground": "#241b2f",
+            "titleBar.activeForeground": "#ff79c6",
+            "titleBar.inactiveBackground": "#241b2f99",
+            "titleBar.inactiveForeground": "#ff79c699",
+            "activityBar.background": "#1e1624",
+            "activityBar.foreground": "#f92aad",
+            "statusBar.background": "#f92aad",
+            "statusBar.foreground": "#ffffff"
+        }
+    }
+}
