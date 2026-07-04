@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -25,3 +26,17 @@ class UploadAudioFileView(APIView):
         )
 
         return Response(CallSerializer(call).data, status=status.HTTP_201_CREATED)
+
+
+class ListCallsView(APIView):
+    def get(self, request):
+        calls = Call.objects.filter(user=request.user)
+        serializer = CallSerializer(calls, many=True)
+        return Response(serializer.data)
+
+
+class CallDetailsView(APIView):
+    def get(self, request, call_id):
+        call = get_object_or_404(Call, call_id=call_id, user=request.user)
+        serializer = CallSerializer(call)
+        return Response(serializer.data)
