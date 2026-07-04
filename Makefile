@@ -45,5 +45,5 @@ docker-web-test:
 docker-web-lint:
 	docker exec -it call-analyzer-call_analyzer_web-1 yarn lint
 
-docker-data-format-code:
+docker-django-format-code:
 	docker exec -it call-analyzer-call_analyzer_django-1 black .
