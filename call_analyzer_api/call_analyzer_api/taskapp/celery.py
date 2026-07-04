@@ -32,3 +32,8 @@ class CeleryAppConfig(AppConfig):
 @app.task(bind=True)
 def debug_task(self):
     print(f"Request: {self.request!r}")  # pragma: no cover
+
+
+@app.task(bind=True)
+def process_audio_file_task(self, call_id):
+    pass

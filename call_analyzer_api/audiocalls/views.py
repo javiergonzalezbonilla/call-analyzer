@@ -4,6 +4,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from call_analyzer_api.taskapp.celery import process_audio_file_task
+
 from .models import Call, UploadedAudioFile
 from .serializers import AudioUploadSerializer, CallSerializer
 
@@ -24,6 +26,8 @@ class UploadAudioFileView(APIView):
             type=audio.content_type or "",
             path=audio.name,
         )
+
+        process_audio_file_task.delay(call.call_id)
 
         return Response(CallSerializer(call).data, status=status.HTTP_201_CREATED)
 

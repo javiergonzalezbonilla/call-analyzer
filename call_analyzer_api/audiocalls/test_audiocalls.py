@@ -1,4 +1,5 @@
 import uuid
+from unittest.mock import patch
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -59,6 +60,21 @@ def test_upload_file_creates_call_with_uploaded_audio_file(api_client, user):
 
 
 @pytest.mark.django_db
+@patch("audiocalls.views.process_audio_file_task")
+def test_upload_file_triggers_process_audio_file_task(mock_task, api_client, user):
+    api_client.force_authenticate(user=user)
+    audio = SimpleUploadedFile(
+        "call.wav", b"fake-audio-bytes", content_type="audio/wav"
+    )
+
+    response = api_client.post(upload_file_url(), {"audio": audio}, format="multipart")
+
+    assert response.status_code == status.HTTP_201_CREATED
+    call = Call.objects.get()
+    mock_task.delay.assert_called_once_with(call.call_id)
+
+
+@pytest.mark.django_db
 def test_upload_file_requires_authentication(api_client):
     audio = SimpleUploadedFile(
         "call.wav", b"fake-audio-bytes", content_type="audio/wav"
@@ -113,9 +129,7 @@ def test_call_detail_returns_the_call(api_client, user):
 
 
 @pytest.mark.django_db
-def test_call_detail_returns_404_for_another_users_call(
-    api_client, user, other_user
-):
+def test_call_detail_returns_404_for_another_users_call(api_client, user, other_user):
     call = Call.objects.create(user=other_user)
     api_client.force_authenticate(user=user)
 

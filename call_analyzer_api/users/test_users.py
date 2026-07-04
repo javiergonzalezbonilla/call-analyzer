@@ -20,7 +20,7 @@ def login_url():
 @pytest.fixture
 def admin(db):
     return User.objects.create_user(
-        email="admin@test.com", password="pw!", role=User.ROLE_ADMIN
+        email="admin-fixture@test.com", password="pw!", role=User.ROLE_ADMIN
     )
 
 
