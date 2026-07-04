@@ -17,11 +17,15 @@ class CallStatus(models.TextChoices):
 class Call(models.Model):
     call_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="audiocalls")
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
     transcript_segments = models.ForeignKey(
-        "TranscriptSegment", on_delete=models.CASCADE, related_name="calls"
+        "TranscriptSegment",
+        on_delete=models.CASCADE,
+        related_name="calls",
+        null=True,
+        blank=True,
     )
     summary = models.TextField(null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
@@ -70,4 +74,4 @@ class UploadedAudioFile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     path = models.CharField(max_length=200)
-    metadata = models.JSONField()
+    metadata = models.JSONField(default=dict, blank=True)

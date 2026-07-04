@@ -8,13 +8,11 @@ version = "0.1.0"
 description = "Call Analyzer API"
 requires-python = ">=3.13"
 
-
-
 dependencies = [
     "djangorestframework",
     "markdown",
     "django-filter",
-    "deepgram"
+    "deepgram-sdk"
 ]
 
 [project.optional-dependencies]
@@ -29,7 +27,6 @@ local = [
     "factory-boy",
     "flake8",
     "black",
-
     "pytz",
     "python-slugify",
     "Pillow",
@@ -61,7 +58,7 @@ log_cli = true
 log_cli_level = "DEBUG"
 minversion = "8.0"
 addopts = ["-ra", "-q", "--strict-markers", "--strict-config", "-v"]
-testpaths = ["./**/*.py"]
+testpaths = ["."]
 DJANGO_SETTINGS_MODULE = "call_analyzer_api.settings.local"
 python_classes = ["Test*"]
 python_functions = ["test_*"]
