@@ -32,18 +32,18 @@ docker-compose-remove:
 	docker-compose -f local.yml rm -s
 
 docker-compose-rebuild: docker-compose-remove
-	docker-compose -f local.yml build --provenance=false
-	docker-compose -f local.yml up
+	docker-compose -f local.yml build --provenance=false 
+	docker-compose -f local.yml up -d
 	
 
-docker-compose-data-test:
+docker-compose-django-test:
 	docker exec -it call-analyzer-call_analyzer_django-1 pytest
 
-docker-web-test:
+docker-compose-web-test:
 	docker exec -it call-analyzer-call_analyzer_web-1 yarn test
 
-docker-web-lint:
+docker-compose-web-lint:
 	docker exec -it call-analyzer-call_analyzer_web-1 yarn lint
 
-docker-django-format-code:
+docker-compose-django-format-code:
 	docker exec -it call-analyzer-call_analyzer_django-1 black .
