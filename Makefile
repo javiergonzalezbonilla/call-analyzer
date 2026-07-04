@@ -55,6 +55,7 @@ test: docker-compose-django-test
 
 rebuild: docker-compose-rebuild
 
+format: docker-compose-django-format-code
 
 logs:
 	docker logs -f call-analyzer-call_analyzer_django-1

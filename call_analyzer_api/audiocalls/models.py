@@ -20,6 +20,9 @@ class Call(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     transcript = models.TextField(null=True, blank=True)
+    transcript_segments = models.ForeignKey(
+        "TranscriptSegment", on_delete=models.CASCADE, related_name="calls"
+    )
     summary = models.TextField(null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
     priority = models.CharField(max_length=100, null=True, blank=True)
@@ -68,5 +71,3 @@ class UploadedAudioFile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     path = models.CharField(max_length=200)
     metadata = models.JSONField()
-
-
