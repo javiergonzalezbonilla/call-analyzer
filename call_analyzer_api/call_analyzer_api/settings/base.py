@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "users",
+    "audiocalls",
 ]
 
 ROOT_URLCONF = "call_analyzer_api.urls"
