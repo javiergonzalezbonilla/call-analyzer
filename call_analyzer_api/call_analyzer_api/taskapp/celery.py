@@ -36,4 +36,16 @@ def debug_task(self):
 
 @app.task(bind=True)
 def process_audio_file_task(self, call_id):
-    pass
+    from audiocalls.models import Call
+
+    call = Call.objects.get(call_id=call_id)
+    uploaded_file = call.uploaded_file
+
+    audio = uploaded_file.audio.open("rb")
+
+    
+
+    print("hello")
+    print(audio)
+
+    # SttServiceFactory().get_service().transcript(uploaded_file)

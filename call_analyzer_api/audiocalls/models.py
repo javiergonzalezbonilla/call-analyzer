@@ -37,6 +37,10 @@ class Call(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField("Tags", related_name="audiocalls")
 
+    @property
+    def uploaded_file(self):
+        return UploadedAudioFile.objects.filter(call=self).first()
+
 
 class TranscriptSegment(models.Model):
     summary = models.TextField(null=True, blank=True)

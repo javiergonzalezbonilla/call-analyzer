@@ -46,11 +46,11 @@ class MockSSTService(SSTService):
 
 class SttServiceFactory:
 
-    def get_service(self, provider: str):
+    def get_service(self):
         povider = settings.STT_PROVIDER
         if povider == "deepgram":
             return DeepgramSSTService()
         elif povider == "mock":
             return MockSSTService()
         else:
-            raise ValueError(f"Invalid provider: {provider}")
+            raise ValueError(f"Provider not defined")
