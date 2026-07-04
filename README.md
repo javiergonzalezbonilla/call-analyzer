@@ -7,7 +7,7 @@ The project consists of a small web application that allows users to upload a sh
 # Install
 
  
-## Create conda environment
+## Setup environment
 
 
 ```sh   
@@ -19,6 +19,24 @@ make install-dependencies
 
 ```
 
+install yarn 
+```sh
+
+brew install yarn
+
+cd call-analyzer-web
+
+yarn
+
+```
+
+
+install docker and docker-compose in your machine 
+
+```sh
+brew install docker
+brew install docker-compose
+```
 
 
 

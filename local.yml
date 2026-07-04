@@ -1,0 +1,70 @@
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  call_analyzer_django: &call_analyzer_django
+    build:
+      context: ./call_analyzer_api
+      dockerfile: ./docker/compose/local/django/Dockerfile
+    image: call_analyzer_django
+    depends_on:
+      - postgres
+    volumes:
+      - ./call_analyzer_api:/app
+    env_file:
+      - ./call_analyzer_api/.envs/.local/.django
+      - ./call_analyzer_api/.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+
+  call_analyzer_web:
+    build:
+      context: ./call_analyzer_web
+      dockerfile: ./docker/compose/local/Dockerfile
+    image: call_analyzer_web
+    depends_on:
+      - call_analyzer_django
+    volumes:
+      - ./call_analyzer_web:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: yarn dev -H 0.0.0.0
+
+  postgres:
+    build:
+      context: ./call_analyzer_api
+      dockerfile: ./docker/compose/local/postgres/Dockerfile
+    image: call_analyzer_postgres
+    volumes:
+      - "${POSTGRES_DATA_PATH}:/var/lib/postgresql/data"
+      - "${POSTGRES_DATA_BACKUPS_PATH}:/backups"
+    env_file:
+      - ./call_analyzer_api/.envs/.local/.postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:8.0-alpine
+    ports:
+      - "6379:6379"
+
+  celeryworker:
+    <<: *call_analyzer_django
+    image: call_analyzer_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *call_analyzer_django
+    image: call_analyzer_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celerybeat
