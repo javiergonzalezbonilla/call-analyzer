@@ -12,7 +12,8 @@ dependencies = [
     "djangorestframework",
     "markdown",
     "django-filter",
-    "deepgram-sdk"
+    "deepgram-sdk",
+    "boto3"
 ]
 
 [project.optional-dependencies]
