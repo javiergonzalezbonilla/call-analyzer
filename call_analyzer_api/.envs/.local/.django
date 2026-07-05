@@ -1,0 +1,14 @@
+# Django
+DJANGO_SETTINGS_MODULE=call_analyzer_api.settings.local
+
+# Redis
+REDIS_URL=redis://redis:6379/0
+
+# Flower
+CELERY_FLOWER_USER=AkSCzUUkrubMopHkMlHHIiFnUzKhIidG
+CELERY_FLOWER_PASSWORD=jspxQGdwrs9VbGLmn5FmXRAGqNt5D6osRgqggNJl1JgcdcCYZdCf7Ch0jcgG0nH7
+
+DEEPGRAM_API_KEY=
+
+ADMIN_EMAIL=admin@test.com
+ADMIN_PASSWORD=admin1234
