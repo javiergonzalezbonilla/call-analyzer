@@ -1,5 +1,5 @@
 
 # Enviroment variables 
 
-.envs
+.envs/prod/*
 uploaded_audio_files/*
