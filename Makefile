@@ -3,7 +3,7 @@
 	docker-compose-remove docker-compose-rebuild \
 	docker-compose-django-test docker-compose-web-test docker-compose-web-lint \
 	docker-compose-django-format-code docker-django-sh \
-	down restart up test rebuild
+	down restart up test rebuild attach format logs
 
 create-environment:
 	conda env create -f ./call_analyzer_api/env.yml
@@ -51,7 +51,7 @@ restart: docker-compose-down docker-compose-up
 
 up: docker-compose-up
 
-test: docker-compose-django-test
+test: docker-compose-django-test 
 
 rebuild: docker-compose-rebuild
 
@@ -59,3 +59,5 @@ format: docker-compose-django-format-code
 
 logs:
 	docker logs -f call-analyzer-call_analyzer_django-1
+attach: 
+	docker attach call-analyzer-call_analyzer_django-1

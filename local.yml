@@ -41,6 +41,8 @@ services:
     ports:
       - "8000:8000"
     command: /start
+    tty: true
+    stdin_open: true
 
   call_analyzer_web:
     build:
@@ -81,6 +83,9 @@ services:
       - redis
       - postgres
     ports: []
+    volumes:
+      - ./call_analyzer_api:/app
+
     command: /start-celeryworker
 
   celerybeat:
@@ -142,7 +147,7 @@ services:
       /bin/sh -c "
       until mc alias set myminio http://nginx:9000 abcd abcd2345; do echo 'waiting for minio...' && sleep 1; done;
       mc mb myminio/temp || true;
-      mc mb myminio/uploaded_files || true;
+      mc mb myminio/uploadedfiles || true;
       mc mb myminio/transcriptions || true;
       exit 0;
       "
