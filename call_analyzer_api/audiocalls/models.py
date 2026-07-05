@@ -20,13 +20,6 @@ class Call(models.Model):
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
-    transcript_segments = models.ForeignKey(
-        "TranscriptSegment",
-        on_delete=models.CASCADE,
-        related_name="calls",
-        null=True,
-        blank=True,
-    )
     summary = models.TextField(null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
     priority = models.CharField(max_length=100, null=True, blank=True)
@@ -43,9 +36,12 @@ class Call(models.Model):
 
 
 class TranscriptSegment(models.Model):
+    call = models.ForeignKey(
+        Call, on_delete=models.CASCADE, related_name="transcript_segments"
+    )
     summary = models.TextField(null=True, blank=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.FloatField()
+    end_time = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -63,8 +59,8 @@ class TranscriptionRole(models.Model):
         related_name="transcription_roles",
     )
     speaker = models.CharField(max_length=100)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.FloatField()
+    end_time = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     text = models.TextField()
