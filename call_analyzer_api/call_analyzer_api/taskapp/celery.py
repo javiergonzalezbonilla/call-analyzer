@@ -51,29 +51,47 @@ def process_audio_file_task(self, call_id):
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
     )
 
-    path = f'audio_files/{uploaded_file.path}'
+    path = f"audio_files/{uploaded_file.path}"
 
     with uploaded_file.audio.open("rb") as audio:
-        upload_response = s3.upload_fileobj(
-            audio, settings.AWS_UPLOADED_FILES_BUCKET_NAME, path
-        )
+        s3.upload_fileobj(audio, settings.AWS_UPLOADED_FILES_BUCKET_NAME, path)
 
-    # try:
-    print(f'path path{path}')
-    print(f'upload response{upload_response}')
     response = SttServiceFactory.get_service().transcript(path)
-    print(response)
+
+    _persist_transcript(call, response)
 
 
-    # except Exception as e:
-    #     print(f"Exception: {e}")
+def _persist_transcript(call, response):
+    from audiocalls.models import CallStatus, Tags, TranscriptSegment, TranscriptionRole
 
-    
+    results = response["results"]
+    alternative = results["channels"][0]["alternatives"][0]
 
+    call.transcript = alternative["transcript"]
+    call.summary = results["summary"]["short"]
+    call.status = CallStatus.COMPLETED
+    call.save()
 
+    for paragraph in alternative["paragraphs"]["paragraphs"]:
+        segment = TranscriptSegment.objects.create(
+            call=call,
+            start_time=paragraph["start"],
+            end_time=paragraph["end"],
+        )
+        for sentence in paragraph["sentences"]:
+            TranscriptionRole.objects.create(
+                transcript_segment=segment,
+                speaker=str(paragraph["speaker"]),
+                start_time=sentence["start"],
+                end_time=sentence["end"],
+                text=sentence["text"],
+            )
 
-
-
-
-
-
+    topic_names = {
+        topic["topic"]
+        for segment in results.get("topics", {}).get("segments", [])
+        for topic in segment.get("topics", [])
+    }
+    for name in topic_names:
+        tag, _ = Tags.objects.get_or_create(name=name)
+        call.tags.add(tag)

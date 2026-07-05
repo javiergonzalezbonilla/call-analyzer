@@ -1,5 +1,7 @@
+import json
 import uuid
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -7,8 +9,19 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from audiocalls.models import Call, UploadedAudioFile
+from audiocalls.models import (
+    Call,
+    CallStatus,
+    TranscriptionRole,
+    TranscriptSegment,
+    UploadedAudioFile,
+)
+from call_analyzer_api.taskapp.celery import process_audio_file_task
 from users.models import User
+
+RESPONSE_FIXTURE_PATH = (
+    Path(__file__).resolve().parent / "services" / "sample_data" / "response.json"
+)
 
 
 @pytest.fixture
@@ -72,6 +85,54 @@ def test_upload_file_triggers_process_audio_file_task(mock_task, api_client, use
     assert response.status_code == status.HTTP_201_CREATED
     call = Call.objects.get()
     mock_task.delay.assert_called_once_with(call.call_id)
+
+
+@pytest.mark.django_db
+@patch("call_analyzer_api.taskapp.celery.boto3.client")
+def test_process_audio_file_task_persists_transcript_and_related_objects(
+    mock_boto_client, user
+):
+    mock_s3 = MagicMock()
+    mock_boto_client.return_value = mock_s3
+
+    call = Call.objects.create(user=user)
+    audio = SimpleUploadedFile(
+        "call.wav", b"fake-audio-bytes", content_type="audio/wav"
+    )
+    UploadedAudioFile.objects.create(
+        call=call, audio=audio, size=audio.size, type="audio/wav", path=audio.name
+    )
+
+    process_audio_file_task(call.call_id)
+
+    with open(RESPONSE_FIXTURE_PATH) as f:
+        response = json.load(f)
+
+    results = response["results"]
+    alternative = results["channels"][0]["alternatives"][0]
+    paragraphs = alternative["paragraphs"]["paragraphs"]
+    expected_topics = {
+        topic["topic"]
+        for segment in results.get("topics", {}).get("segments", [])
+        for topic in segment.get("topics", [])
+    }
+
+    call.refresh_from_db()
+    assert call.status == CallStatus.COMPLETED
+    assert call.transcript == alternative["transcript"]
+    assert call.summary == results["summary"]["short"]
+
+    segments = TranscriptSegment.objects.filter(call=call)
+    assert segments.count() == len(paragraphs)
+
+    expected_role_count = sum(len(paragraph["sentences"]) for paragraph in paragraphs)
+    assert (
+        TranscriptionRole.objects.filter(transcript_segment__call=call).count()
+        == expected_role_count
+    )
+
+    assert set(call.tags.values_list("name", flat=True)) == expected_topics
+    mock_s3.upload_fileobj.assert_called_once()
 
 
 @pytest.mark.django_db
