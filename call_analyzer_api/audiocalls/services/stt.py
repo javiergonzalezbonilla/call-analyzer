@@ -1,9 +1,12 @@
 import abc
 import json
+from pathlib import Path
+
 from django.conf import settings
 from deepgram import DeepgramClient
 
 AUDIO_URL = "https://static.deepgram.com/examples/Bueller-Life-moves-pretty-fast.wav"
+MOCK_RESPONSE_PATH = Path(__file__).resolve().parent / "sample_data" / "response.json"
 
 
 class SSTService(abc.ABC):
@@ -37,11 +40,8 @@ class DeepgramSSTService(SSTService):
 
 class MockSSTService(SSTService):
     def transcript(self, audio_url: str):
-        try:
-            with open("./mock_data/mock_transcription.json", "r") as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"Exception: {e}")
+        with open(MOCK_RESPONSE_PATH, "r") as f:
+            return json.load(f)
 
 
 class SttServiceFactory:
