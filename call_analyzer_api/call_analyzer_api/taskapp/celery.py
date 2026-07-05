@@ -6,6 +6,7 @@ import boto3
 from celery import Celery
 from django.apps import apps, AppConfig
 from django.conf import settings
+from audiocalls.services.stt import SttServiceFactory
 
 if not settings.configured:
     # set the default Django settings module for the 'celery' program.
@@ -50,9 +51,29 @@ def process_audio_file_task(self, call_id):
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
     )
 
+    path = f'audio_files/{uploaded_file.path}'
+
     with uploaded_file.audio.open("rb") as audio:
-        s3.upload_fileobj(
-            audio, settings.AWS_UPLOADED_FILES_BUCKET_NAME, uploaded_file.path
+        upload_response = s3.upload_fileobj(
+            audio, settings.AWS_UPLOADED_FILES_BUCKET_NAME, path
         )
+
+    # try:
+    print(f'path path{path}')
+    print(f'upload response{upload_response}')
+    response = SttServiceFactory.get_service().transcript(path)
+    print(response)
+
+
+    # except Exception as e:
+    #     print(f"Exception: {e}")
+
+    
+
+
+
+
+
+
 
 

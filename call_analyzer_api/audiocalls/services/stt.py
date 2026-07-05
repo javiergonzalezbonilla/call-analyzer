@@ -45,8 +45,8 @@ class MockSSTService(SSTService):
 
 
 class SttServiceFactory:
-
-    def get_service(self):
+    @staticmethod
+    def get_service():
         povider = settings.STT_PROVIDER
         if povider == "deepgram":
             return DeepgramSSTService()

@@ -4,4 +4,5 @@ set -o errexit
 set -o nounset
 
 
-celery -A call_analyzer_api.taskapp worker -l INFO
+watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- \
+    celery -A call_analyzer_api.taskapp worker -l INFO

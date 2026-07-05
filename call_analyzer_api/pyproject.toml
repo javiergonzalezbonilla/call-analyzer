@@ -43,6 +43,7 @@ local = [
     "flower",
     "tornado",
     "fast-test-database",
+    "watchdog",
 ]
 production = [
     "gunicorn",
